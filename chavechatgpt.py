@@ -1,0 +1,1 @@
+chave = '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'
