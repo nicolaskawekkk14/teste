@@ -1,9 +1,9 @@
 from usuariosdw import *
-print(('-' * 12),'SERTÃO LIVRE',('-' * 12))
+
+print('SERTÃO LIVRE')
 
 comerciantes = []
 login_atual = None
-
 
 while True:
     print('\n      MENU      \n')
@@ -17,44 +17,40 @@ while True:
         realizar_cadastro(comerciantes)
 
     elif alt == "2":
-       if realizar_login(comerciantes):
-           continue
+        if realizar_login(comerciantes):
+            continue
 
-    else:
-        print("Login ou senha inválidos.")
+        else:
+            print("Login ou senha inválidos.")
 
     while True:
-            print("\nMENU DE GERENCIAMENTO DE PRODUTOS:")
-            print("1 - Atualizar senha")
-            print("2 - Cadastrar produto")
-            print("3 - Remover produto")
-            print("4 - Buscar produto")
-            print("5 - Editar produto")
-            print("0 - Voltar")
+        print("\nMENU DE GERENCIAMENTO DE PRODUTOS:")
+        print("1 - Atualizar senha")
+        print("2 - Cadastrar produto")
+        print("3 - Remover produto")
+        print("4 - Buscar produto")
+        print("5 - Editar produto")
+        print("0 - Voltar")
 
-            opcao_gerenciamento = input("Digite a opção desejada: ")
+        opcao_gerenciamento = input("Digite a opção desejada: ")
 
-            if opcao_gerenciamento == "1":
-                atualizar_senha(login_atual, comerciantes)
+        if opcao_gerenciamento == "1":
+            atualizar_senha(login_atual, comerciantes)
 
-            elif opcao_gerenciamento == "2":
-                cadastrar_produto(comerciantes, login_atual)
+        elif opcao_gerenciamento == "2":
+            cadastrar_produto(comerciantes, login_atual)
 
+        elif opcao_gerenciamento == "3":
+            remover_produto(comerciantes, login_atual)
 
-            elif opcao_gerenciamento == "3":
-                remover_produto(comerciantes, login_atual)
+        elif opcao_gerenciamento == "4":
+            buscar_produto(comerciantes, login_atual)
 
+        elif opcao_gerenciamento == "5":
+            editar_produto(comerciantes, login_atual)
 
-            elif opcao_gerenciamento == "4":
-                buscar_produto(comerciantes, login_atual)
+        elif opcao_gerenciamento == "0":
+            break
 
-            elif opcao_gerenciamento == "5":
-                editar_produto(comerciantes, login_atual)
-
-            elif opcao_gerenciamento == "0":
-                break
-
-            else:
-                print("Opção inválida. Digite novamente.")
-
-
+        else:
+            print("Opção inválida. Digite novamente.")

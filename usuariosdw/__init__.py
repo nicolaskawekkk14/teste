@@ -1,104 +1,149 @@
-import openai
-
-def realizar_cadastro(comerciantes):
-
-    nome = str(input("Digite o nome do vendedor: "))
-    login = str(input("Digite o login do vendedor: "))
-    senha = str(input("Digite a senha do vendedor: "))
-    comerciante = {"nome": nome, "login": login, "senha": senha, "produtos": []}
-    comerciantes.append(comerciante)
-    print("Comerciante cadastrado com sucesso!")
 
 
-def realizar_login(comerciantes):
+def realizar_cadastro(nome, login, senha, comerciantes):
+    if any(comerciante['login'] == login for comerciante in comerciantes):
+        print('Esse login já existe. Por favor, cadastrar outro.')
+    else:
+        comerciante = {"nome": nome, "login": login, "senha": senha, "produto": [], "produtos_comprados":[]}
+        comerciantes.append(comerciante)
+        print("Comerciante cadastrado com sucesso!")
+
+
+
+def fazer_login(login, senha, comerciantes):
     logado = False
-    login = str((input("Digite o login: ")))
-    senha = str(input("Digite a senha: "))
+    login_atual = None
     for comerciante in comerciantes:
-        if comerciante["login"] == login and comerciante["senha"] == senha:
-            login_atual = login
+        if comerciante['login'] == login and comerciante['senha'] == senha:
             print("Login realizado com sucesso!")
+            login_atual = comerciante
             logado = True
             break
-    return logado
+    return logado, login_atual
 
-def atualizar_senha(login_atual, comerciantes):
-        nova_senha = input("Digite a nova senha: ")
+def atualizar_senha(login_redefinir, nova_senha, comerciantes):
         for comerciante in comerciantes:
-            if comerciante["login"] == login_atual:
-                comerciante["senha"] = nova_senha
+            if comerciante['login'] == login_redefinir:
+                comerciante['senha'] = nova_senha
                 print("Senha atualizada com sucesso!")
                 break
+        else:
+            print("Comerciante não encontrado.")
 
-def cadastrar_produto(comerciantes, login_atual):
-    codigo = input("Digite o código do produto: ")
-    nome = input("Digite o nome do produto: ")
-    produto = {"codigo": codigo, "nome": nome}
+def cadstrar_produto(codigo, nome, descricao, quantidade, preco, comerciantes, login_atual):
+    produto = {"codigo": codigo, "nome": nome, 'descricao': descricao, 'preco': preco, 'quantidade': quantidade}
     for comerciante in comerciantes:
-        if comerciante["login"] == login_atual:
-            comerciante["produtos"].append(produto)
+        if comerciante["login"] == login_atual['login']:
+            comerciante["produto"].append(produto)
             print("Produto cadastrado com sucesso!")
             break
 
-def remover_produto(comerciantes, login_atual):
-    codigo = input("Digite o código do produto a ser removido: ")
+def remover_produto(codigo, comerciantes, login_atual):
+
     for comerciante in comerciantes:
-        if comerciante["login"] == login_atual:
-            for produto in comerciante["produtos"]:
+        if comerciante["login"] == login_atual['login']:
+            for produto in comerciante["produto"]:
                 if produto["codigo"] == codigo:
-                    comerciante["produtos"].remove(produto)
+                    comerciante["produto"].remove(produto)
                     print("Produto removido com sucesso!")
                     break
 
-def buscar_produto(comerciantes, login_atual):
-    codigo = input("Digite o código do produto a ser buscado: ")
+    else:
+        print("Produto não encontrado.")
+
+def buscar_produto(codigo, comerciantes, login_atual):
     for comerciante in comerciantes:
-        if comerciante["login"] == login_atual:
-            for produto in comerciante["produtos"]:
+        if comerciante["login"] == login_atual['login']:
+            for produto in comerciante["produto"]:
                 if produto["codigo"] == codigo:
                     print(f"Código: {produto['codigo']}")
                     print(f"Nome: {produto['nome']}")
+                    return
 
-                else:
-                    print("Produto não encontrado.")
-                    break
+            else:
+                print("Produto não encontrado.")
+                break
 
-def editar_produto(comerciantes, login_atual):
-    codigo = input("Digite o código do produto a ser atualizado: ")
+def editar_produto(codigo, comerciantes, login_atual):
     for comerciante in comerciantes:
-        if comerciante["login"] == login_atual:
-            for produto in comerciante["produtos"]:
+        if comerciante["login"] == login_atual['login']:
+            for produto in comerciante["produto"]:
                 if produto["codigo"] == codigo:
                     novo_nome = input("Digite o novo nome do produto: ")
                     produto["nome"] = novo_nome
                     print("Produto atualizado com sucesso!")
                     break
+
             else:
                 print("Produto não encontrado.")
-            break
+                break
 
-def consultarchatgpt(produto):
-    openai.api_key = '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'
+def buscar_produto_cliente(comerciantes, login_atual, buscar ):
+    produto_achado = False
 
-    # Set the model and prompt
-    model_engine = "text-davinci-003"
-    prompt = 'O que voce acha do' + produto +  ''
-    # Set the maximum number of tokens to generate in the response
-    max_tokens = 1024
+    for comerciante in comerciantes:
+        #if comerciante["login"] == login_atual['login']:
+            for produto in comerciante["produto"]:
+                if produto["nome"] == buscar or produto['descricao'] == buscar:
+                    produto_achado = True
+                    print(f"Nome: {produto['nome']}")
+                    print(f"Descrição: {produto['descricao']}")
+                    print(f'Quantidade: {produto["quantidade"]}')
+                    produto_achado = True
+                    return
 
-    # Generate a response
-    completion = openai.Completion.create(
-        engine=model_engine,
-        prompt=prompt,
-        max_tokens=max_tokens,
-        temperature=0.5,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0
-    )
+    else:
+        print("Produto não encontrado.")
 
-    # Print the response
-    return completion.choices[0].text
+def comprar_produtos(comerciantes, login_atual, comprar_produto, quantidade_de_produtos):
+    produto_localizado = False
+
+    for comerciante in comerciantes:
+            for produto in comerciante["produto"]:
+                if produto["nome"] == comprar_produto:
+                    print(f"Nome: {produto['nome']}")
+                    print(f"Esse produto custa: {produto['preco']}R$")
+                    print(f"A quantidade é: {produto['quantidade']}")
+                    if quantidade_de_produtos <= produto['quantidade']:
+                        produto['quantidade'] -= quantidade_de_produtos
+                        print('Forma única de pagamento: Cartão de crédito')
+                        numero_cartao = int(input('Digite o número do cartão: '))
+                        print('Compra realizada com sucesso!')
+                        login_atual["produtos_comprados"].append(produto)
+                    else:
+                        print('Quantidade solicitada maior do que a disponível em estoque.')
+
+                    produto_localizado = True
+                    return
+
+    if not produto_localizado:
+        print('Produto não encontrado.')
+
+def lista_de_compras(login_atual):
+    produtos_comprados = login_atual["produtos_comprados"]
+
+
+    if len(produtos_comprados) > 0:
+        print("Produtos comprados:")
+        for produto in produtos_comprados:
+            print(produtos_comprados)
+            return
+    else:
+        print("Nenhum produto foi comprado.")
+
+
+def consultar_descricao(comerciantes, login_atual, nome_produto):
+    produto_encontrado = False
+
+    for comerciante in comerciantes:
+            for produto in comerciante["produto"]:
+                if produto["nome"] == nome_produto:
+                    print(f"Descrição: {produto['descricao']}")
+                    produto_encontrado = True
+                    return
+
+    if not produto_encontrado:
+        print("Nenhum produto encontrado.")
 
 
 
